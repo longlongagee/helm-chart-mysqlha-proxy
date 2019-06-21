@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.master.name }}
+  labels:
+    app.kubernetes.io/name: {{ include "mysqlha.name" . }}
+    helm.sh/chart: {{ include "mysqlha.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.master.name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.master.name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: mysqlha
+          containerPort: 3306
+        env:
+        {{- if .Values.mysqlAllowEmptyPassword }}
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        {{- else }}
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.master.rootPassWord }}
+        - name: MYSQL_REPLICATION_USER
+          value: {{ .Values.master.replUser }}
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: {{ .Values.master.replPassword }}
+        {{- end }}
+        - name: MYSQL_USER
+          value: {{ default "" .Values.mysqlUser | quote }}
+        - name: MYSQL_DATABASE
+          value: {{ default "" .Values.mysqlDatabase | quote }}
+        volumeMounts:
+          - name: data
+            mountPath: '/var/lib/mysql'
+            subPath: 'var/lib/mysql'
+          - name: configurations
+            mountPath: '/etc/mysql/mysql.conf.d/'
+      volumes:
+      {{- if .Values.master.configurationFiles }}
+      - name: configurations
+        configMap:
+          name: {{ .Values.master.name }}
+      {{- end }}
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.master.name }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.slave.name }}
+  labels:
+    app.kubernetes.io/name: {{ include "mysqlha.name" . }}
+    helm.sh/chart: {{ include "mysqlha.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.slave.name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.slave.name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: mysqlha
+          containerPort: 3306
+        env:
+        {{- if .Values.mysqlAllowEmptyPassword }}
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        {{- else }}
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.slave.rootPassWord }}
+        - name: MYSQL_REPLICATION_USER
+          value: {{ .Values.slave.replUser }}
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: {{ .Values.slave.replPassword }}
+        {{- end }}
+        - name: MYSQL_USER
+          value: {{ default "" .Values.mysqlUser | quote }}
+        - name: MYSQL_DATABASE
+          value: {{ default "" .Values.mysqlDatabase | quote }}
+        volumeMounts:
+          - name: data
+            mountPath: '/var/lib/mysql'
+            subPath: 'var/lib/mysql'
+          - name: configurations
+            mountPath: '/etc/mysql/mysql.conf.d/'
+      volumes:
+      {{- if .Values.slave.configurationFiles }}
+      - name: configurations
+        configMap:
+          name: {{ .Values.slave.name }}
+      {{- end }}
+      - name: data
+      {{- if .Values.persistence.enabled }}
+      persistentVolumeClaim:
+        claimName: {{ .Values.slave.name }}
+      {{- else }}
+      emptyDir: {}
+      {{- end -}}

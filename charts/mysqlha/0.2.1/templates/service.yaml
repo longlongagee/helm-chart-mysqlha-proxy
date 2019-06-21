@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "mysqlha.fullname" . }}-{{ .Values.master.name }}'
+  labels:
+    app.kubernetes.io/name: {{ include "mysqlha.name" . }}
+    helm.sh/chart: {{ include "mysqlha.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.master.type }}
+  ports:
+    - name: mysqlha
+      port: {{ .Values.master.port }}
+      targetPort: mysqlha
+      {{- if .Values.master.nodePort }}
+      nodePort: {{ .Values.master.nodePort }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/name: '{{ include "mysqlha.fullname" . }}-{{ .Values.master.name }}'
+    app.kubernetes.io/instance: {{ .Release.Name }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "mysqlha.fullname" . }}-{{ .Values.slave.name }}'
+  labels:
+    app.kubernetes.io/name: {{ include "mysqlha.name" . }}
+    helm.sh/chart: {{ include "mysqlha.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.slave.type }}
+  ports:
+    - name: mysqlha
+      port: {{ .Values.slave.port }}
+      targetPort: mysqlha
+      {{- if .Values.slave.nodePort }}
+      nodePort: {{ .Values.slave.nodePort }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/name: '{{ include "mysqlha.fullname" . }}-{{ .Values.slave.name }}'
+    app.kubernetes.io/instance: {{ .Release.Name }}
+

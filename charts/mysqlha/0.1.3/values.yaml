@@ -1,0 +1,135 @@
+# Default values for mysqlha.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# todo ico
+replicaCount: 1
+
+image:
+  repository: mysql
+  tag: "5.7.24"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+persistence:
+  enabled: true
+  ## database data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  accessMode: ReadWriteMany
+  size: 10Gi
+
+
+master:
+  type: ClusterIP
+  port: 3306
+  name: mysql-master
+  rootPassWord: 'psgacbas@root'
+  replUser: 'repl'
+  replPassword: 'repl@2019'
+  configurationFiles:
+    master.cnf: |2+
+
+      [mysqld]
+      pid-file        = /var/run/mysqld/mysqld.pid
+      socket          = /var/run/mysqld/mysqld.sock
+      datadir         = /var/lib/mysql
+      #log-error      = /var/log/mysql/error.log
+      # By default we only accept connections from localhost
+      #bind-address   = 127.0.0.1
+      # Disabling symbolic-links is recommended to prevent assorted security risks
+      symbolic-links=0
+
+      # 双主配置
+      server_id = 1
+      log-bin= mysql-bin
+
+      replicate-ignore-db=mysql
+      replicate-ignore-db=sys
+      replicate-ignore-db=information_schema
+      replicate-ignore-db=performance_schema
+
+      read-only=0
+      relay_log=mysql-relay-bin
+      log-slave-updates=on
+      auto-increment-offset=1
+      auto-increment-increment=2
+      sql_mode ="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+slave:
+  type: ClusterIP
+  port: 3306
+  name: mysql-slave
+  rootPassWord: 'psgacbas@root'
+  replUser: 'repl'
+  replPassword: 'repl@2019'
+  configurationFiles:
+    slave.cnf: |2+
+
+      [mysqld]
+      pid-file        = /var/run/mysqld/mysqld.pid
+      socket          = /var/run/mysqld/mysqld.sock
+      datadir         = /var/lib/mysql
+      #log-error      = /var/log/mysql/error.log
+      # By default we only accept connections from localhost
+      #bind-address   = 127.0.0.1
+      # Disabling symbolic-links is recommended to prevent assorted security risks
+      symbolic-links=0
+
+      # 双主配置
+      server_id = 2
+      log-bin= mysql-bin
+
+      replicate-ignore-db=mysql
+      replicate-ignore-db=sys
+      replicate-ignore-db=information_schema
+      replicate-ignore-db=performance_schema
+
+      read-only=0
+      relay_log=mysql-relay-bin
+      log-slave-updates=on
+      auto-increment-offset=2
+      auto-increment-increment=2
+      sql_mode ="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+
+
+
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
