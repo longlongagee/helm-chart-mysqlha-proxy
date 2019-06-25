@@ -52,11 +52,11 @@ spec:
       volumes:
       - name: conf
         configMap:
-          name: {{ include "ftpd.name" . }}
+          name: {{ include "ftpd.fullname" . }}
       - name: data
       {{- if .Values.persistence.enabled }}
       persistentVolumeClaim:
-        claimName: {{ include "ftpd.name" . }}
+        claimName: {{ include "ftpd.fullname" . }}
       {{- else }}
       emptyDir: {}
       {{- end -}}
