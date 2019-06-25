@@ -1,0 +1,69 @@
+{{- if .Values.configurationFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ftpd.name" . }}
+data:
+  user.conf: |2+
+
+    #用户名   密码      权限      目录
+    {{ .Values.user1 }}  {{ .Values.password1 }}  elradfmwM  /home/{{ .Values.user1 }}
+    {{- if .Values.user2 }}
+    {{ .Values.user2 }}  {{ .Values.password2 }}  elradfmwM  /home/{{ .Values.user2 }}
+    {{- end }}
+    {{- if .Values.user3 }}
+    {{ .Values.user3 }}  {{ .Values.password3 }}  elradfmwM  /home/{{ .Values.user3 }}
+    {{- end }}
+
+    # 权限说明：
+    # 读权限 ：
+    # e     改变文件目录
+    # l     列出文件
+    # r     从服务器接收文件
+    # 写权限 ：
+    # a     文件上传
+    # d     删除文件
+    # f     文件重命名
+    # m     创建文件
+    # w     写权限
+    # M     文件传输模式（通过FTP设置文件权限 ）
+
+
+  settings.py: |2+
+
+    #!/usr/bin/env python
+    # -*- coding:utf-8 _*-
+
+    ip = '0.0.0.0'
+
+    port = '21'
+
+    # 上传速度限制  100MB/s
+    max_upload = 100 * 1024 * 1024
+
+    # 下载速度限制 100MB/s
+    max_download = 100 * 1024 * 1024
+
+    # 最大连接数
+    max_cons = 150
+
+    # 最多IP数
+    max_per_ip = 10
+
+    # 是否开启匿名访问 on|off
+    enable_anonymous = 'off'
+
+    # 匿名用户目录
+    anonymous_path = '/home/hx'
+
+    # 是否开启日志 on|off
+    enable_logging = 'on'
+
+    # 日志文件
+    loging_name = 'log/ftp.log'
+
+    # 登陆信息
+    welcome_msg = 'Welcome to my ftp'
+
+
+{{- end }}

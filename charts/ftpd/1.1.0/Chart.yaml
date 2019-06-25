@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: "1.0"
+description: mulit-users FtpServer Helm chart for Rancher
+name: ftpd
+version: 1.0.0
+icon: http://192.168.8.30/dashboard/static/dashboard/img/logo.svg
+maintainers:
+- name: wushaolong
+  email: wushaolong@richstonedt.com

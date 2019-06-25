@@ -1,0 +1,31 @@
+{{- if .Values.configurationFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ftpd.name" . }}
+data:
+  user.conf: |2+
+
+    #用户名   密码      权限      目录
+    {{ .Values.user1 }}  {{ .Values.password1 }}  elradfmwM  /home/{{ .Values.user1 }}
+    {{- if .Values.user2 }}
+    {{ .Values.user2 }}  {{ .Values.password2 }}  elradfmwM  /home/{{ .Values.user2 }}
+    {{- end }}
+    {{- if .Values.user3 }}
+    {{ .Values.user3 }}  {{ .Values.password3 }}  elradfmwM  /home/{{ .Values.user3 }}
+    {{- end }}
+
+    # 权限说明：
+    # 读权限 ：
+    # e     改变文件目录
+    # l     列出文件
+    # r     从服务器接收文件
+    # 写权限 ：
+    # a     文件上传
+    # d     删除文件
+    # f     文件重命名
+    # m     创建文件
+    # w     写权限
+    # M     文件传输模式（通过FTP设置文件权限 ）
+
+{{- end }}

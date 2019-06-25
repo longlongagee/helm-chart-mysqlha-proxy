@@ -1,0 +1,103 @@
+categories:
+- Database
+questions:
+- variable: defaultImage
+  default: false
+  description: "Use default PostgreSQL images"
+  label: 使用默认镜像
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+  subquestions:
+  - variable: image
+    default: "192.168.6.96:8098/sorintlab/stolon"
+    description: "PostgreSQL image name"
+    type: string
+    label: 镜像名称
+  - variable: imageTag
+    default: "v0.13.0-pg11"
+    description: "PostgreSQL image tag"
+    type: enum
+    label: （可选）镜像tag版本
+    required: true
+    options:
+      - "v0.13.0-pg9.6"
+      - "v0.13.0-pg10"
+      - "v0.13.0-pg11"
+- variable: auth.enabled
+  default: true
+  description: "如果不指定, 默认root密码是rootpasswd"
+  type: boolean
+  label: 修改默认root命令
+  required: true
+  show_subquestion_if: true
+  group: "PostgreSQL HA Settings"
+  subquestions:
+  - variable: pgSuperuserName
+    default: "stolon"
+    description: "PostgreSQL superusername name"
+    type: string
+    label: pgsuperuser名称
+    required: true
+  - variable: pgSuperuserPassword
+    default: ""
+    description: "PostgreSQL superusername  password"
+    type: password
+    label: pgsuperuser密码
+    required: true
+- variable: proxyNodePort
+  default: false
+  description: "Use keepker and proxy Nodeport"
+  label: 使用自定义集群端口
+  type: boolean
+  show_subquestion_if: true
+  group: "PostgreSQL HA Settings"
+  subquestions:
+    - variable: proxy.serviceType
+      default: "NodePort"
+      description: "proxy使用Node-port，留空使用集群ip端口5432"
+      type: string
+      label: Node-port
+      required: true
+    - variable: keeper.serviceType
+      default: "NodePort"
+      description: "keeper使用Node-port，留空使用集群ip端口5432"
+      type: string
+      label: Node-port
+      required: true
+- variable: persistence.enabled
+  default: false
+  description: "Enable persistent volume for PostgreSQL"
+  type: boolean
+  required: true
+  label: 使用PostgreSQL数据持久化
+  show_subquestion_if: true
+  group: "Persistent Volume"
+  subquestions:
+  - variable: persistence.size
+    default: "10Gi"
+    description: "PostgreSQL Persistent Volume Size"
+    type: string
+    label: PostgreSQL Volume Size
+  - variable: persistence.storageClass
+    default: ""
+    description: "If unndefined or null, uses the default StorageClass. Defaults to null."
+    type: storageclass
+    label: 使用持久化存储类
+  - variable: persistence.accessMode
+    default: "ReadWriteOnce"
+    description: "默认使用单用户读写"
+    type: string
+    label: 访问模式
+- variable: keeper.resources.requests.cpu
+  default: "100m"
+  description: "MySQL-Proxy Node-port"
+  type: string
+  label: postgresql实例资源cpu限制 (keeper)
+  group: "Resource Limit"
+- variable: keeper.resources.requests.memory
+  default: "512Mi"
+  description: "MySQL-Proxy Node-port"
+  type: string
+  label: postgresql实例资源内存限制 (keeper)
+  group: "Resource Limit"

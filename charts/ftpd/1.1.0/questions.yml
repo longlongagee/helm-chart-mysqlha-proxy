@@ -1,0 +1,104 @@
+categories:
+- ftp
+questions:
+- variable: defaultImage
+  default: true
+  description: "Use default ftpd images"
+  label: 使用默认镜像
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+  subquestions:
+  - variable: image.repository
+    default: "192.168.6.96:8098/pyftp"
+    description: "ftpd image name"
+    type: string
+    label: 镜像名称
+  - variable: image.tag
+    default: "0.2.0"
+    description: "ftpd image tag"
+    type: string
+    label: 镜像tag版本
+- variable: auth.enabled
+  default: false
+  description: "更多用户添加修改/etc/vsftpd/user.conf"
+  type: boolean
+  label: 添加多虚拟用户
+  required: true
+  show_subquestion_if: true
+  group: "Ftpd User Settings"
+  subquestions:
+  - variable: user1
+    default: "admin"
+    description: "user1 name"
+    type: string
+    label: user1账号
+    required: true
+  - variable: password1
+    default: "admin"
+    description: "user1 password"
+    type: password
+    label: user1密码
+    required: true
+  - variable: user2
+    default: ""
+    description: "user2 name"
+    type: string
+    label: user2账号
+  - variable: password2
+    default: ""
+    description: "user2 password"
+    type: password
+    label: user2密码
+  - variable: user3
+    default: ""
+    description: "user3 name"
+    type: string
+    label: user3账号
+  - variable: password3
+    default: ""
+    description: "user3 password"
+    type: password
+    label: user3密码
+- variable: persistentVolume.enabled
+  default: true
+  description: "Enable persistent volume for ftpd"
+  type: boolean
+  required: true
+  label: 使用ftpd数据持久化
+  show_subquestion_if: true
+  group: "Persistent Volume"
+  subquestions:
+  - variable: persistentVolume.size
+    default: "10Gi"
+    description: "ftpd Persistent Volume Size"
+    type: string
+    label: ftpd Volume Size
+  - variable: persistentVolume.storageClass
+    default: ""
+    description: "If unndefined or null, uses the default StorageClass. Defaults to null."
+    type: storageclass
+    label: 使用持久化存储类
+  - variable: persistentVolume.accessMode
+    default: "ReadWriteMany"
+    description: "默认使用多用户读写"
+    type: string
+    label: 访问模式
+- variable: PASV_ADDRESS
+  default: "192.168.108.3"
+  description: "ftp访问地址，填写任意一rancher工作节点访问地址，ftp通过该地址访问"
+  group: "被动模式设置"
+  label: 被动模式使用（外网）地址
+  required: true
+  type: int
+  min: 30000
+  max: 32701
+- variable: PASV_PORT.PASV_PORT_MIN
+  default: ""
+  description: "范围：30000-32701，会添加该端口，并打开（该端口号 +1）额外一个端口"
+  group: "被动模式设置"
+  label: 被动模式使用传输端口
+  required: true
+  type: int
+  min: 30000
+  max: 32701

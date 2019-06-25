@@ -1,0 +1,26 @@
+{{- if .Values.master.configurationFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mysqlha.fullname" . }}-{{ .Values.master.name }}
+data:
+{{- range $key, $val := .Values.master.configurationFiles }}
+  {{ $key }}: |-
+{{ $val | indent 4}}
+{{- end }}
+{{- end }}
+
+---
+
+{{- if .Values.slave.configurationFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mysqlha.fullname" . }}-{{ .Values.slave.name }}
+data:
+{{- range $key, $val := .Values.slave.configurationFiles }}
+  {{ $key }}: |-
+{{ $val | indent 4}}
+{{- end }}
+{{- end -}}
+

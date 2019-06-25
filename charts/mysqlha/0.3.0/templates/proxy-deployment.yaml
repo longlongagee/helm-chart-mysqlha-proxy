@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ include "mysqlha.fullname" . }}-{{ .Values.proxy.name }}'
+  labels:
+    app.kubernetes.io/name: {{ include "mysqlha.name" . }}
+    helm.sh/chart: {{ include "mysqlha.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: '{{ include "mysqlha.fullname" . }}-{{ .Values.proxy.name }}'
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: '{{ include "mysqlha.fullname" . }}-{{ .Values.proxy.name }}'
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.proxy.image }}:{{ .Values.proxy.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: mysqlha
+          containerPort: 3306
+        env:
+        {{- if .Values.mysqlAllowEmptyPassword }}
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        {{- else }}
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.master.rootPassWord }}
+        - name: MYSQL_REPLICATION_USER
+          value: {{ .Values.master.replUser }}
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: {{ .Values.master.replPassword }}
+        {{- end }}
+        {{- if .Values.mysqlAllowEmptyPassword }}
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "true"
+        {{- else }}
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.slave.rootPassWord }}
+        - name: MYSQL_REPLICATION_USER
+          value: {{ .Values.slave.replUser }}
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: {{ .Values.slave.replPassword }}
+        {{- end }}
+        - name: MYSQL_MASTER
+          value: '{{ include "mysqlha.fullname" . }}-{{ .Values.master.name }}'
+        - name: MYSQL_MASTER_PORT
+          {{- if .Values.master.nodePort }}
+          value: {{ .Values.master.nodePort }}
+          {{- else }}
+          value: "3306"
+          {{- end }}
+        - name: MYSQL_SLAVE
+          value: '{{ include "mysqlha.fullname" . }}-{{ .Values.slave.name }}'
+        - name: MYSQL_SLAVE_PORT
+          {{- if .Values.slave.nodePort }}
+          value: {{ .Values.slave.nodePort }}
+          {{- else }}
+          value: "3306"
+          {{- end }}

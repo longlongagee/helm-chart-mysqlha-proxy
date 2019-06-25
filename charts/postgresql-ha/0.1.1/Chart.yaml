@@ -1,0 +1,18 @@
+apiVersion: v1
+name: postgresql-ha
+version: 0.1.1
+appVersion: 0.13.0
+home: https://github.com/sorintlab/stolon
+description: PostgreSQL HA cluster (Stolon) for Rancher
+icon: http://192.168.8.30/dashboard/static/dashboard/img/logo.svg
+sources:
+  - https://github.com/sorintlab/stolon
+  - https://github.com/lwolf/stolon-chart
+  - http://192.168.6.126/nebula/rancher-local-charts
+maintainers:
+  - name: Sergey Nuzhdin
+    email: ipaq.lw@gmail.com
+  - name: Ryan Luckie
+    email: rluckie@cisco.com
+  - name: wushaolong
+    email: wushaolong@richstone.com
