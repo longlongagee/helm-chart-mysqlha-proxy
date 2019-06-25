@@ -20,7 +20,7 @@ service:
 PASV_ADDRESS: 192.168.108.3
 
 PASV_PORT:
-  enable: true
+  enabled: true
   PASV_PORT_MIN: 32101
 #  PASV_PORT_MAX: 32102
 
@@ -35,7 +35,7 @@ user3: ''
 password3: ''
 
 persistence:
-  enable: true
+  enabled: true
   size: 10Gi
   accessModes: ReadWriteMany
   storageClass: ''

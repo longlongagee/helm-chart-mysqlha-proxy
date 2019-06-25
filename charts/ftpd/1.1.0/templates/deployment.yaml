@@ -36,7 +36,7 @@ spec:
           env:
           - name: PASV_ADDRESS
             value: {{ .Values.PASV_ADDRESS }}
-          {{- if .Values.PASV_PORT.enable }}
+          {{- if .Values.PASV_PORT.enabled }}
           - name: PASV_PORT_MIN
             value: {{ .Values.PASV_PORT.PASV_PORT_MIN | quote }}
           - name: PASV_PORT_MAX
@@ -54,7 +54,7 @@ spec:
         configMap:
           name: {{ include "ftpd.name" . }}
       - name: data
-      {{- if .Values.persistence.enable }}
+      {{- if .Values.persistence.enabled }}
       persistentVolumeClaim:
         claimName: {{ include "ftpd.name" . }}
       {{- else }}
