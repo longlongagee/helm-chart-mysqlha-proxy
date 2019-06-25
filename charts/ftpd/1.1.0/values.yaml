@@ -36,6 +36,10 @@ password3: ''
 
 persistence:
   enabled: true
+  size: 10Gi
+  accessModes: ReadWriteMany
+  storageClass: ''
+
 
 configurationFiles: true
 
