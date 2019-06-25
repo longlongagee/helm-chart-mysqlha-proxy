@@ -35,7 +35,7 @@ user3: ''
 password3: ''
 
 persistence:
-  enabled: true
+  enable: true
   size: 10Gi
   accessModes: ReadWriteMany
   storageClass: ''

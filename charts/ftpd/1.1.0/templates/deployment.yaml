@@ -54,7 +54,7 @@ spec:
         configMap:
           name: {{ include "ftpd.name" . }}
       - name: data
-      {{- if .Values.persistence.enabled }}
+      {{- if .Values.persistence.enable }}
       persistentVolumeClaim:
         claimName: {{ include "ftpd.name" . }}
       {{- else }}
