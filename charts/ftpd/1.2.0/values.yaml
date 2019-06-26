@@ -1,0 +1,57 @@
+# Default values for ftpd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: 192.168.6.96:8098/pyftp
+  tag: "0.2.0"
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: NodePort
+  port: 21
+  nodeport: ''
+
+PASV_ADDRESS: 192.168.108.3
+
+PASV_PORT:
+  enabled: true
+  PASV_PORT_MIN: 32101
+#  PASV_PORT_MAX: 32102
+
+# 目前通过固定写法支持3用户，待优化添加用户方法
+user1: admin
+password1: admin
+
+user2: ''
+password2: ''
+
+user3: ''
+password3: ''
+
+persistence:
+  enabled: true
+  size: 10Gi
+  accessModes: ReadWriteMany
+  storageClass: ''
+
+
+configurationFiles: true
+
+resources: {}
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

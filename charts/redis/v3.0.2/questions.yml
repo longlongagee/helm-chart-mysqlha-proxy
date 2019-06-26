@@ -3,7 +3,7 @@ categories:
 - Database
 questions:
 - variable: defaultImage
-  default: "true"
+  default: "false"
   description: "Use default Docker images"
   label: Use Default Images
   type: boolean
@@ -11,7 +11,7 @@ questions:
   group: "Container Images"
   subquestions:
   - variable: image.repository
-    default: "bitnami/redis"
+    default: "192.168.6.96:8098/redis"
     description: "Redis image name"
     type: string
     label: Redis Image Name
@@ -34,8 +34,8 @@ questions:
     show_if: "metrics.enabled=true"
 - variable: cluster.enabled
   default: "true"
-  description: "Use leader-follower topology"
-  label: Clustered Topology
+  description: "使用Redis集群主从架构"
+  label: 集群架构
   type: boolean
   show_subquestion_if: true
   group: "Redis Slave Settings"
@@ -44,7 +44,7 @@ questions:
     default: "3"
     description: "Number of followers"
     type: string
-    label: Number of Followers
+    label: 从节点数量
 - variable: usePassword
   default: "true"
   description: "Use password authentication"

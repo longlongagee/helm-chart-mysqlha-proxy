@@ -109,6 +109,9 @@ spec:
         {{- end }}
         resources:
 {{ toYaml .Values.master.resources | indent 10 }}
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
         volumeMounts:
         - name: redis-data
           mountPath: {{ .Values.master.persistence.path }}

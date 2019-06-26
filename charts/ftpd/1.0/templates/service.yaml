@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ftpd.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "ftpd.name" . }}
+    helm.sh/chart: {{ include "ftpd.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: 21tcp
+      port: {{ .Values.service.port }}
+      targetPort: 21tcp01
+      {{- if .Values.service.nodeport }}
+      nodePort: {{ .Values.service.nodeport }}
+      {{- end }}
+    - name: '{{ .Values.PASV_PORT.PASV_PORT_MIN }}tcp'
+      port: {{ .Values.PASV_PORT.PASV_PORT_MIN }}
+      targetPort: '{{ .Values.PASV_PORT.PASV_PORT_MIN }}tcp'
+      {{- if .Values.PASV_PORT.PASV_PORT_MIN }}
+      nodePort: {{ .Values.PASV_PORT.PASV_PORT_MIN }}
+      {{- end }}
+    - name: '{{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}tcp'
+      port: {{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}
+      targetPort: '{{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}tcp'
+      {{- if add .Values.PASV_PORT.PASV_PORT_MIN 1 }}
+      nodePort: {{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "ftpd.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

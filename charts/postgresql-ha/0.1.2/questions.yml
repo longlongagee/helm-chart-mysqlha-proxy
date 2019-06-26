@@ -95,13 +95,13 @@ questions:
     label: 访问模式
 - variable: keeper.resources.requests.cpu
   default: "100m"
-  description: "MySQL-Proxy Node-port"
+  description: "CPU资源使用限制"
   type: string
   label: PostgreSQL 实例资源cpu限制 (keeper)
   group: "Resource Limit"
 - variable: keeper.resources.requests.memory
   default: "512Mi"
-  description: "MySQL-Proxy Node-port"
+  description: "内存使用限制"
   type: string
   label: PostgreSQL 实例资源内存限制 (keeper)
   group: "Resource Limit"

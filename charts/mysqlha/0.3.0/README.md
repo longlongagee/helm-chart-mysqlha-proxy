@@ -30,6 +30,7 @@ _v0.3.0_
 ```bash
 # 指定密码、nodePort、server—name等等
 helm install -set "slave.rootPassWord=xxx,master.rootPassWord=xxx" local/mysqlha --name mytest
+helm install ./stolon -set "keeper.serviceType=NodePort,proxy.serviceType=NodePort"--namespace=demo
 
 ```
 #### 具体配置参数查看命令

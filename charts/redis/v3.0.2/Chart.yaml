@@ -1,7 +1,7 @@
-name: redis
+name: redis-cluster
 version: 3.0.2
 appVersion: 4.0.9
-description: Open source, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets.
+description: rancher官方给了完备且简单的redis charts方案，沿用官方方案，本地化.
 keywords:
 - redis
 - keyvalue

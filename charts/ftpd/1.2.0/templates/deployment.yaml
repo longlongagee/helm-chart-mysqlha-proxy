@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ftpd.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "ftpd.name" . }}
+    helm.sh/chart: {{ include "ftpd.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "ftpd.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "ftpd.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: 21tcp01
+              protocol: TCP
+            - containerPort: {{ .Values.PASV_PORT.PASV_PORT_MIN }}
+              name: {{ .Values.PASV_PORT.PASV_PORT_MIN }}tcp
+              protocol: TCP
+            - containerPort: {{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}
+              name: {{ add .Values.PASV_PORT.PASV_PORT_MIN 1 }}tcp
+              protocol: TCP
+          env:
+          - name: PASV_ADDRESS
+            value: {{ .Values.PASV_ADDRESS }}
+          {{- if .Values.PASV_PORT.enabled }}
+          - name: PASV_PORT_MIN
+            value: {{ .Values.PASV_PORT.PASV_PORT_MIN | quote }}
+          - name: PASV_PORT_MAX
+            value: {{ add .Values.PASV_PORT.PASV_PORT_MIN 1 | quote }}
+          {{- end }}
+
+          volumeMounts:
+            - mountPath: '/etc/vsftpd'
+              name: conf
+            - mountPath: '/home'
+              name: data
+              subPath: 'data'
+      volumes:
+      - name: conf
+        configMap:
+          defaultMode: 0700
+          name: {{ include "ftpd.fullname" . }}
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "ftpd.fullname" . }}
+      {{- else }}
+        emptyDir: {}
+      {{- end -}}
