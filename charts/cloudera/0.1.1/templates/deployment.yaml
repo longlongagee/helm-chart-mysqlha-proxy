@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cloudera.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "cloudera.name" . }}
+    helm.sh/chart: {{ include "cloudera.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "cloudera.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "cloudera.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh",  "-c",  "/usr/bin/docker-quickstart && /home/cloudera/cloudera-manager --force --express && service ntpd start && sleep 3600000"]
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          ports:
+            - containerPort: 80
+            - containerPort: 2181
+            - containerPort: 7180
+            - containerPort: 8020
+            - containerPort: 8022
+            - containerPort: 8088
+            - containerPort: 8888
+            - containerPort: 8090
+            - containerPort: 9092
+            - containerPort: 11000
+            - containerPort: 18088
+            - containerPort: 19888
+            - containerPort: 21050
+            - containerPort: 25010
+            - containerPort: 25020
+            - containerPort: 50010
+            - containerPort: 50020
+            - containerPort: 50070
+            - containerPort: 50075
+            - containerPort: 60000
+            - containerPort: 60010
+          securityContext:
+            allowPrivilegeEscalation: true
+            privileged: true
+      nodeName: {{ .Values.nodeSelector }}
+      hostAliases:
+      - hostnames:
+        - quickstart.cloudera
+        ip: "127.0.0.1"
+      hostname: {{ include "cloudera.fullname" . }}

@@ -1,0 +1,40 @@
+# Default values for ftpd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: 192.168.6.96:8098/cloudera/quickstart
+  tag: "latest"
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: NodePort
+
+  port: 7180
+  nodePort: ''
+
+  port80: 80
+  nodePort80: ''
+
+persistence:
+  enabled: true
+  size: 10Gi
+  accessModes: ReadWriteMany
+  storageClass: ''
+
+resources:
+  requests:
+    cpu: "4"
+    memory: 8096Mi
+  limits:
+    cpu: "4"
+    memory: 16384Mi
+
+nodeSelector: 'rancher-worker-6'
+
+

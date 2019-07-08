@@ -1,0 +1,22 @@
+categories:
+- Hadoop
+- CDH
+questions:
+- variable: defaultImage
+  default: "false"
+  description: "Use default Docker images"
+  label: 使用默认镜像
+  type: boolean
+  show_subquestion_if: false
+  group: "自定义容器镜像"
+  subquestions:
+  - variable: image.repository
+    default: "192.168.6.96:8098/cloudera/quickstart"
+    description: "cloudera image name"
+    type: string
+    label: cloudera Image Name
+  - variable: image.tag
+    default: "latest"
+    description: "cloudera image tag"
+    type: string
+    label: cloudera Image Tag
