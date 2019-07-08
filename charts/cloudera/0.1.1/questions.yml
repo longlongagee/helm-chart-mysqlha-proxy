@@ -20,3 +20,63 @@ questions:
     description: "cloudera image tag"
     type: string
     label: cloudera Image Tag
+
+- variable: service.nodePort1
+    default: "随机NodePort"
+    description: "cloudera 映射端口（80）"
+    type: enum
+    group: "Services and Load Balancing"
+    options:
+      - "随机NodePort"
+      - "自定义NodePort"
+    required: true
+    label: cloudera 映射端口（80）
+    show_subquestion_if: "自定义NodePort"
+    subquestions:
+      - variable: service.nodePort80
+        default: ""
+        description: "NodePort port number(to set explicitly, choose port between 30000-32767)"
+        type: int
+        min: 30000
+        max: 32767
+        label: cloudera 80 Service NodePort number
+
+- variable: service.nodePort1
+  default: "随机NodePort"
+  description: "cloudera 映射端口（80）"
+  type: enum
+  group: "Services and Load Balancing"
+  options:
+    - "随机NodePort"
+    - "自定义NodePort"
+  required: true
+  label: cloudera 映射端口（80）
+  show_subquestion_if: "自定义NodePort"
+  subquestions:
+  - variable: service.nodePort80
+    default: ""
+    description: "NodePort port number(to set explicitly, choose port between 30000-32767)"
+    type: int
+    min: 30000
+    max: 32767
+    label: cloudera 80 Service NodePort number
+
+- variable: service.nodePort2
+  default: "随机NodePort"
+  description: "cloudera 映射端口（7180）"
+  type: enum
+  group: "Services and Load Balancing"
+  options:
+    - "随机NodePort"
+    - "自定义NodePort"
+  required: true
+  label: cloudera 映射端口（7180）
+  show_subquestion_if: "自定义NodePort"
+  subquestions:
+  - variable: service.nodePort
+    default: ""
+    description: "NodePort port number(to set explicitly, choose port between 30000-32767)"
+    type: int
+    min: 30000
+    max: 32767
+    label: cloudera 7180 Service NodePort number
